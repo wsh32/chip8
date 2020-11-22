@@ -1,9 +1,33 @@
+/**
+ * @file chip8.cpp
+ * @brief Implememntation of the CHIP8 memory and emulation
+ */
+
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <stdexcept>
 
 #include "chip8.h"
 
+const unsigned char chip8_fontset[FONTSET_LEN] = { 
+    0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
+    0x20, 0x60, 0x20, 0x20, 0x70,  // 1
+    0xF0, 0x10, 0xF0, 0x80, 0xF0,  // 2
+    0xF0, 0x10, 0xF0, 0x10, 0xF0,  // 3
+    0x90, 0x90, 0xF0, 0x10, 0x10,  // 4
+    0xF0, 0x80, 0xF0, 0x10, 0xF0,  // 5
+    0xF0, 0x80, 0xF0, 0x90, 0xF0,  // 6
+    0xF0, 0x10, 0x20, 0x40, 0x40,  // 7
+    0xF0, 0x90, 0xF0, 0x90, 0xF0,  // 8
+    0xF0, 0x90, 0xF0, 0x10, 0xF0,  // 9
+    0xF0, 0x90, 0xF0, 0x90, 0x90,  // A
+    0xE0, 0x90, 0xE0, 0x90, 0xE0,  // B
+    0xF0, 0x80, 0x80, 0x80, 0xF0,  // C
+    0xE0, 0x90, 0x90, 0x90, 0xE0,  // D
+    0xF0, 0x80, 0xF0, 0x80, 0xF0,  // E
+    0xF0, 0x80, 0xF0, 0x80, 0x80   // F
+};
 
 Chip8::Chip8() {
     this->pc = ROM_START;
@@ -24,6 +48,9 @@ Chip8::Chip8() {
 
     // Clear memory
     std::fill(this->memory, this->memory + sizeof(this->memory), 0);
+
+    // Load font in memory
+    std::memcpy(this->memory, &chip8_fontset, FONTSET_LEN);
 
     // Reset timers
     this->delayTimer = 0;
@@ -53,11 +80,11 @@ void Chip8::loadRom(const char * path) {
         // Write ROM data to memory
         char * buffer = new char[length];
         infile.read(buffer, length); 
-        std::memcpy(buffer, this->memory + ROM_START, length);
+        std::memcpy(this->memory + ROM_START, buffer, length);
         std::free(buffer);
     } else {
         // ROM too big
-        std::cout << "ROM file too big" << std::endl;
+        throw std::invalid_argument("ROM file too big");
     }
 }
 

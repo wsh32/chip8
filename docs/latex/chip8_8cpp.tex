@@ -1,0 +1,53 @@
+\hypertarget{chip8_8cpp}{}\doxysection{src/chip8.cpp File Reference}
+\label{chip8_8cpp}\index{src/chip8.cpp@{src/chip8.cpp}}
+
+
+Implememntation of the C\+H\+I\+P8 memory and emulation.  
+
+
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include $<$stdexcept$>$}\newline
+{\ttfamily \#include \char`\"{}chip8.\+h\char`\"{}}\newline
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const unsigned char {\bfseries chip8\+\_\+fontset} \mbox{[}F\+O\+N\+T\+S\+E\+T\+\_\+\+L\+EN\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implememntation of the C\+H\+I\+P8 memory and emulation. 
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{chip8_8cpp_af5f13e1165ffcdb1dbcb50e18540b1c6}\label{chip8_8cpp_af5f13e1165ffcdb1dbcb50e18540b1c6}} 
+\index{chip8.cpp@{chip8.cpp}!chip8\_fontset@{chip8\_fontset}}
+\index{chip8\_fontset@{chip8\_fontset}!chip8.cpp@{chip8.cpp}}
+\doxysubsubsection{\texorpdfstring{chip8\_fontset}{chip8\_fontset}}
+{\footnotesize\ttfamily const unsigned char chip8\+\_\+fontset\mbox{[}F\+O\+N\+T\+S\+E\+T\+\_\+\+L\+EN\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{ }
+\DoxyCodeLine{    0xF0, 0x90, 0x90, 0x90, 0xF0,  }
+\DoxyCodeLine{    0x20, 0x60, 0x20, 0x20, 0x70,  }
+\DoxyCodeLine{    0xF0, 0x10, 0xF0, 0x80, 0xF0,  }
+\DoxyCodeLine{    0xF0, 0x10, 0xF0, 0x10, 0xF0,  }
+\DoxyCodeLine{    0x90, 0x90, 0xF0, 0x10, 0x10,  }
+\DoxyCodeLine{    0xF0, 0x80, 0xF0, 0x10, 0xF0,  }
+\DoxyCodeLine{    0xF0, 0x80, 0xF0, 0x90, 0xF0,  }
+\DoxyCodeLine{    0xF0, 0x10, 0x20, 0x40, 0x40,  }
+\DoxyCodeLine{    0xF0, 0x90, 0xF0, 0x90, 0xF0,  }
+\DoxyCodeLine{    0xF0, 0x90, 0xF0, 0x10, 0xF0,  }
+\DoxyCodeLine{    0xF0, 0x90, 0xF0, 0x90, 0x90,  }
+\DoxyCodeLine{    0xE0, 0x90, 0xE0, 0x90, 0xE0,  }
+\DoxyCodeLine{    0xF0, 0x80, 0x80, 0x80, 0xF0,  }
+\DoxyCodeLine{    0xE0, 0x90, 0x90, 0x90, 0xE0,  }
+\DoxyCodeLine{    0xF0, 0x80, 0xF0, 0x80, 0xF0,  }
+\DoxyCodeLine{    0xF0, 0x80, 0xF0, 0x80, 0x80   }
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}

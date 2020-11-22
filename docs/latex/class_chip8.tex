@@ -1,0 +1,66 @@
+\hypertarget{class_chip8}{}\doxysection{Chip8 Class Reference}
+\label{class_chip8}\index{Chip8@{Chip8}}
+
+
+\mbox{\hyperlink{class_chip8}{Chip8}} system internals.  
+
+
+
+
+{\ttfamily \#include $<$chip8.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_chip8_a6d72f2cd7b791e0da2b66e3f9dc2b751}\label{class_chip8_a6d72f2cd7b791e0da2b66e3f9dc2b751}} 
+\mbox{\hyperlink{class_chip8_a6d72f2cd7b791e0da2b66e3f9dc2b751}{Chip8}} ()
+\begin{DoxyCompactList}\small\item\em Initializes a blank \mbox{\hyperlink{class_chip8}{Chip8}} and clears all memory, except for the interpreter memory, which is loaded with the fontset. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_chip8_ab16bd941c1634d4c9c457e383f85cb3b}\label{class_chip8_ab16bd941c1634d4c9c457e383f85cb3b}} 
+\mbox{\hyperlink{class_chip8_ab16bd941c1634d4c9c457e383f85cb3b}{$\sim$\+Chip8}} ()
+\begin{DoxyCompactList}\small\item\em Destructor. Does nothing for now. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_chip8_aa90d1bbfaae924e47cd2a77bb6e69fd6}{load\+Rom}} (const char $\ast$path)
+\begin{DoxyCompactList}\small\item\em Loads a R\+OM file into memory. The location in memory allocated to R\+OM data is from 0x200 to 0x\+E9F, which is defined by R\+O\+M\+\_\+\+S\+T\+A\+RT and R\+O\+M\+\_\+\+E\+ND in \mbox{\hyperlink{chip8_8h}{chip8.\+h}}. If the R\+OM file is bigger than the available space, it will throw an invalid\+\_\+argument exception. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_chip8_ad76cb5dfd4fe46f5edd353ff69edca05}\label{class_chip8_ad76cb5dfd4fe46f5edd353ff69edca05}} 
+void \mbox{\hyperlink{class_chip8_ad76cb5dfd4fe46f5edd353ff69edca05}{emulate\+Cycle}} ()
+\begin{DoxyCompactList}\small\item\em Runs a single clock cycle in emulation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_chip8_a690f986d89bbdebaceafdf7ceffea07b}\label{class_chip8_a690f986d89bbdebaceafdf7ceffea07b}} 
+unsigned char \mbox{\hyperlink{class_chip8_a690f986d89bbdebaceafdf7ceffea07b}{gfx}} \mbox{[}G\+F\+X\+\_\+X $\ast$G\+F\+X\+\_\+Y\mbox{]}
+\begin{DoxyCompactList}\small\item\em Graphics buffer. Dimensions are defined by G\+F\+X\+\_\+X and G\+F\+X\+\_\+Y, should be 64x32. Each value in this buffer is a binary value. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_chip8_a2c772b9d08b2e7b493e136fa94db0faf}\label{class_chip8_a2c772b9d08b2e7b493e136fa94db0faf}} 
+unsigned char \mbox{\hyperlink{class_chip8_a2c772b9d08b2e7b493e136fa94db0faf}{key}} \mbox{[}K\+E\+YS\mbox{]}
+\begin{DoxyCompactList}\small\item\em Input buffer. Number of inputs is defined by K\+E\+YS, should be 16. Each value in this buffer is a binary value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{class_chip8}{Chip8}} system internals. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_chip8_aa90d1bbfaae924e47cd2a77bb6e69fd6}\label{class_chip8_aa90d1bbfaae924e47cd2a77bb6e69fd6}} 
+\index{Chip8@{Chip8}!loadRom@{loadRom}}
+\index{loadRom@{loadRom}!Chip8@{Chip8}}
+\doxysubsubsection{\texorpdfstring{loadRom()}{loadRom()}}
+{\footnotesize\ttfamily void Chip8\+::load\+Rom (\begin{DoxyParamCaption}\item[{const char $\ast$}]{path }\end{DoxyParamCaption})}
+
+
+
+Loads a R\+OM file into memory. The location in memory allocated to R\+OM data is from 0x200 to 0x\+E9F, which is defined by R\+O\+M\+\_\+\+S\+T\+A\+RT and R\+O\+M\+\_\+\+E\+ND in \mbox{\hyperlink{chip8_8h}{chip8.\+h}}. If the R\+OM file is bigger than the available space, it will throw an invalid\+\_\+argument exception. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & \+: Path to the R\+OM file. Use an absolute path or a path relative to the user\textquotesingle{}s current directory. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em invalid\+\_\+argument} & if the R\+OM file is greater than the allocated memory \\
+\hline
+\end{DoxyExceptions}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{chip8_8h}{chip8.\+h}}\item 
+src/\mbox{\hyperlink{chip8_8cpp}{chip8.\+cpp}}\end{DoxyCompactItemize}

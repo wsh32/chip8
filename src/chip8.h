@@ -24,6 +24,8 @@
 #define ROM_START 0x200
 #define ROM_END 0xE9F
 
+#define FONTSET_LEN 80
+
 /**
  * @class Chip8
  * @brief Chip8 system internals
@@ -45,38 +47,48 @@ private:
     unsigned short stack[STACK];  // 16 levels of stack
     unsigned short sp;  // Stack pointer
 
-    unsigned char key[KEYS];  // Keypad
-
 public:
+
+    /**
+     * @brief Initializes a blank Chip8 and clears all memory, except for the
+     * interpreter memory, which is loaded with the fontset.
+     */
     Chip8();
+
+    /**
+     * @brief Destructor. Does nothing for now
+     */
     ~Chip8();
 
+    /**
+     * @brief Graphics buffer. Dimensions are defined by GFX_X and GFX_Y, should
+     * be 64x32. Each value in this buffer is a binary value.
+     */
     unsigned char gfx[GFX_X * GFX_Y];  // 64x32 graphics
 
+    /**
+     * @brief Input buffer. Number of inputs is defined by KEYS, should be 16.
+     * Each value in this buffer is a binary value.
+     */
+    unsigned char key[KEYS];  // Keypad
+
+    /**
+     * @brief Loads a ROM file into memory. The location in memory allocated to ROM
+     * data is from 0x200 to 0xE9F, which is defined by ROM_START and ROM_END in
+     * chip8.h. If the ROM file is bigger than the available space, it will throw an
+     * invalid_argument exception.
+     *
+     * @param path : Path to the ROM file. Use an absolute path or a path relative
+     * to the user's current directory.
+     * @throws invalid_argument if the ROM file is greater than the allocated memory
+     */
     void loadRom(const char * path);
+
+    /**
+     * @brief Runs a single clock cycle in emulation.
+     */
     void emulateCycle();
 };
-
-/*
-unsigned char chip8_fontset[80] = { 
-    0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
-    0x20, 0x60, 0x20, 0x20, 0x70,  // 1
-    0xF0, 0x10, 0xF0, 0x80, 0xF0,  // 2
-    0xF0, 0x10, 0xF0, 0x10, 0xF0,  // 3
-    0x90, 0x90, 0xF0, 0x10, 0x10,  // 4
-    0xF0, 0x80, 0xF0, 0x10, 0xF0,  // 5
-    0xF0, 0x80, 0xF0, 0x90, 0xF0,  // 6
-    0xF0, 0x10, 0x20, 0x40, 0x40,  // 7
-    0xF0, 0x90, 0xF0, 0x90, 0xF0,  // 8
-    0xF0, 0x90, 0xF0, 0x10, 0xF0,  // 9
-    0xF0, 0x90, 0xF0, 0x90, 0x90,  // A
-    0xE0, 0x90, 0xE0, 0x90, 0xE0,  // B
-    0xF0, 0x80, 0x80, 0x80, 0xF0,  // C
-    0xE0, 0x90, 0x90, 0x90, 0xE0,  // D
-    0xF0, 0x80, 0xF0, 0x80, 0xF0,  // E
-    0xF0, 0x80, 0xF0, 0x80, 0x80   // F
-};
-*/
 
 #endif
 
