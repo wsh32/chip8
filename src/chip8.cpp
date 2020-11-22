@@ -5,8 +5,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <algorithm>
-#include <stdexcept>
+#include <cstring>
 
 #include "chip8.h"
 
@@ -50,7 +49,7 @@ Chip8::Chip8() {
     std::fill(this->memory, this->memory + sizeof(this->memory), 0);
 
     // Load font in memory
-    std::memcpy(this->memory, &chip8_fontset, FONTSET_LEN);
+    memcpy(this->memory, &chip8_fontset, FONTSET_LEN);
 
     // Reset timers
     this->delayTimer = 0;
@@ -80,7 +79,7 @@ void Chip8::loadRom(const char * path) {
         // Write ROM data to memory
         char * buffer = new char[length];
         infile.read(buffer, length); 
-        std::memcpy(this->memory + ROM_START, buffer, length);
+        memcpy(this->memory + ROM_START, buffer, length);
         std::free(buffer);
     } else {
         // ROM too big
