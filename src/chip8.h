@@ -53,6 +53,45 @@ private:
     unsigned short stack[STACK];  // 16 levels of stack
     unsigned short sp;  // Stack pointer
 
+    // Opcodes, see https://en.wikipedia.org/wiki/CHIP-8#Opcode_table
+    void runOpcode();
+
+    void op0NNN(unsigned short N);
+    void op00E0();
+    void op00EE();
+    void op1NNN(unsigned short N);
+    void op2NNN(unsigned short N);
+    void op3XNN(unsigned char X, unsigned char N);
+    void op4XNN(unsigned char X, unsigned char N);
+    void op5XY0(unsigned char X, unsigned char Y);
+    void op6XNN(unsigned char X, unsigned char N);
+    void op7XNN(unsigned char X, unsigned char N);
+    void op8XY0(unsigned char X, unsigned char Y);
+    void op8XY1(unsigned char X, unsigned char Y);
+    void op8XY2(unsigned char X, unsigned char Y);
+    void op8XY3(unsigned char X, unsigned char Y);
+    void op8XY4(unsigned char X, unsigned char Y);
+    void op8XY5(unsigned char X, unsigned char Y);
+    void op8XY6(unsigned char X, unsigned char Y);
+    void op8XY7(unsigned char X, unsigned char Y);
+    void op8XYE(unsigned char X, unsigned char Y);
+    void op9XY0(unsigned char X, unsigned char Y);
+    void opANNN(unsigned short N);
+    void opBNNN(unsigned short N);
+    void opCXNN(unsigned char X, unsigned char N);
+    void opDXYN(unsigned char X, unsigned char Y, unsigned char N);
+    void opEX9E(unsigned char X);
+    void opEXA1(unsigned char X);
+    void opFX07(unsigned char X);
+    void opFX0A(unsigned char X);
+    void opFX15(unsigned char X);
+    void opFX18(unsigned char X);
+    void opFX1E(unsigned char X);
+    void opFX29(unsigned char X);
+    void opFX33(unsigned char X);
+    void opFX55(unsigned char X);
+    void opFX65(unsigned char X);
+
 public:
 
     /**
@@ -95,6 +134,9 @@ public:
      */
     void emulateCycle();
 };
+
+
+void throwOpcodeNotImplemented(unsigned short opcode);
 
 #endif
 
