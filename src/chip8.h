@@ -6,6 +6,12 @@
 #ifndef CHIP8_H
 #define CHIP8_H
 
+#include <stdio.h>
+#include <fstream>
+#include <cstring>
+
+#include "formatted_exception.h"
+
 // Chip8 definitions
 // Grabbed from wikipedia:
 // https://en.wikipedia.org/wiki/CHIP-8#Virtual_machine_description

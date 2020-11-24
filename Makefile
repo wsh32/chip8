@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -Wall -Werror -std=c++14
 
-CHIP8_OBJS = chip8.o emulator.o
+CHIP8_OBJS = chip8.o emulator.o formatted_exception.o
 CHIP8_BINARY = emulator
 
 SOURCE_DIR = ./src/

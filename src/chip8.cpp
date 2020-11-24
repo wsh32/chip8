@@ -3,10 +3,6 @@
  * @brief Implememntation of the CHIP8 memory and emulation
  */
 
-#include <iostream>
-#include <fstream>
-#include <cstring>
-
 #include "chip8.h"
 
 const unsigned char chip8_fontset[FONTSET_LEN] = { 
@@ -29,34 +25,34 @@ const unsigned char chip8_fontset[FONTSET_LEN] = {
 };
 
 Chip8::Chip8() {
-    this->pc = ROM_START;
+    pc = ROM_START;
  
     // Reset variables
-    this->opcode = 0;
-    this->I = 0;
-    this->sp = 0;
+    opcode = 0;
+    I = 0;
+    sp = 0;
 
     // Clear display
-    std::fill(this->gfx, this->gfx + sizeof(this->gfx), 0);
+    std::fill(gfx, gfx + sizeof(gfx), 0);
 
     // Clear stack
-    std::fill(this->stack, this->stack + sizeof(this->stack), 0);
+    std::fill(stack, stack + sizeof(stack), 0);
 
     // Clear registers
-    std::fill(this->V, this->V + sizeof(this->V), 0);
+    std::fill(V, V + sizeof(V), 0);
 
     // Clear memory
-    std::fill(this->memory, this->memory + sizeof(this->memory), 0);
+    std::fill(memory, memory + sizeof(memory), 0);
 
     // Load font in memory
-    memcpy(this->memory, &chip8_fontset, FONTSET_LEN);
+    memcpy(memory, &chip8_fontset, FONTSET_LEN);
 
     // Reset timers
-    this->delayTimer = 0;
-    this->soundTimer = 0;
+    delayTimer = 0;
+    soundTimer = 0;
 
     // Clear keypad
-    std::fill(this->key, this->key + sizeof(this->key), 0);
+    std::fill(key, key + sizeof(key), 0);
 }
 
 Chip8::~Chip8() {
@@ -74,12 +70,12 @@ void Chip8::loadRom(const char * path) {
 
     if (length <= ROM_END - ROM_START) {
         // Clear previous ROM
-        std::fill(this->memory + ROM_START, this->memory + ROM_END, 0);
+        std::fill(memory + ROM_START, memory + ROM_END, 0);
         
         // Write ROM data to memory
         char * buffer = new char[length];
         infile.read(buffer, length); 
-        memcpy(this->memory + ROM_START, buffer, length);
+        memcpy(memory + ROM_START, buffer, length);
         std::free(buffer);
     } else {
         // ROM too big
@@ -88,6 +84,34 @@ void Chip8::loadRom(const char * path) {
 }
 
 void Chip8::emulateCycle() {
+    // Get opcode
+    // Opcode is 2 bytes at the pc
+    opcode = memory[pc] << 8 | memory[pc + 1];
 
+    // Decode opcode
+    switch (opcode) {
+        // Insert opcodes here
+        case 0xA000:
+            printf("A000");
+            break;
+
+        // Opcode not found
+        default:
+            throw FormattedException("Opcode not found, 0x%X\n", opcode);
+    }
+
+    // Timers
+    // Count down 1 each timer
+    if (delayTimer > 0) {
+        delayTimer--;
+    }
+
+    if (soundTimer > 0) {
+        // Decrement soundTimer and check the value after decrement
+        if (--soundTimer == 0) {
+            // Sound buzzer
+            printf("beep");
+        }
+    }
 }
 
