@@ -5,7 +5,7 @@
 
 int main() {
     Chip8 chip;
-    chip.loadRom("roms/guess.rom");
+    chip.loadRom("roms/pong.rom");
 
     // Main loop
     while(true) {

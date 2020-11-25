@@ -34,6 +34,7 @@ Chip8::Chip8() {
 
     // Clear display
     std::fill(gfx, gfx + sizeof(gfx), 0);
+    drawFlag = true;
 
     // Clear stack
     std::fill(stack, stack + sizeof(stack), 0);
@@ -87,6 +88,10 @@ void Chip8::emulateCycle() {
     // Get opcode
     // Opcode is 2 bytes at the pc
     opcode = memory[pc] << 8 | memory[pc + 1];
+    printf("PC: %X, Opcode: %X\n", pc, opcode);
+
+    // Reset drawFlag
+    drawFlag = false;
 
     // Execute opcode
     runOpcode();
@@ -113,12 +118,12 @@ void Chip8::runOpcode() {
     switch (opcode & 0xF000) {
         // Insert opcodes here
         case 0x0000:
-            switch (opcode) {
-                case 0x00E0:
+            switch (opcode & 0x0F) {
+                case 0x0000:
                     op00E0();
                     break;
 
-                case 0x00EE:
+                case 0x000E:
                     op00EE();
                     break;
                 
@@ -267,10 +272,10 @@ void Chip8::runOpcode() {
 
         // Opcode not found
         default:
+            printf("Program counter: %X", pc);
             throwOpcodeNotImplemented(opcode);
             break;
     }
-
 }
 
 void throwOpcodeNotImplemented(unsigned short opcode) {
@@ -283,172 +288,351 @@ void Chip8::op0NNN(unsigned short N) {
 }
 
 void Chip8::op00E0() {
-    throwOpcodeNotImplemented(opcode);
+    // Clear display
+    std::fill(gfx, gfx + sizeof(gfx), 0);
+    drawFlag = true;
+    printf("Warning: graphics not implemented, clear display\n");
 
+    // Increment Program Counter
+    pc += 2;
 }
 
 void Chip8::op00EE() {
-    throwOpcodeNotImplemented(opcode);
+    // Return from function
+    // Move Program Counter back to the previous position in stack
+    sp--;
+    pc = stack[sp];
 
+    // Increment Program Counter
+    pc += 2;
 }
 
 void Chip8::op1NNN(unsigned short N) {
-    throwOpcodeNotImplemented(opcode);
-
+    // goto NNN
+    pc = N;
 }
 
 void Chip8::op2NNN(unsigned short N) {
-    throwOpcodeNotImplemented(opcode);
-
+    // Calls subroutine at NNN
+    stack[sp] = pc;
+    sp++;
+    pc = N;
 }
 
 void Chip8::op3XNN(unsigned char X, unsigned char N) {
-    throwOpcodeNotImplemented(opcode);
-
+    // Skips the next instruction if VX == NN
+    if (V[X] == N) {
+        // Increment the program counter twice
+        pc += 4;
+    } else {
+        // Increment the program counter once
+        pc += 2;
+    }
 }
 
 void Chip8::op4XNN(unsigned char X, unsigned char N) {
-    throwOpcodeNotImplemented(opcode);
-
+    // Skips the next instruction if VX != NN
+    if (V[X] != N) {
+        // Increment the program counter twice
+        pc += 4;
+    } else {
+        // Increment the program counter once
+        pc += 2;
+    }
 }
 
 void Chip8::op5XY0(unsigned char X, unsigned char Y) {
-    throwOpcodeNotImplemented(opcode);
-
+    // Skips the next instruction if VX == VY
+    if (V[X] == V[Y]) {
+        // Increment the program counter twice
+        pc += 4;
+    } else {
+        // Increment the program counter once
+        pc += 2;
+    }
 }
 
 void Chip8::op6XNN(unsigned char X, unsigned char N) {
-    throwOpcodeNotImplemented(opcode);
-
+    // Sets VX to NN
+    V[X] = N;
+    
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::op7XNN(unsigned char X, unsigned char N) {
-    throwOpcodeNotImplemented(opcode);
+    // Adds NN to VX, carry flag is not changed
+    V[X] += N;
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::op8XY0(unsigned char X, unsigned char Y) {
-    throwOpcodeNotImplemented(opcode);
+    // Sets VX = VY
+    V[X] = V[Y];
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::op8XY1(unsigned char X, unsigned char Y) {
-    throwOpcodeNotImplemented(opcode);
+    // Sets VX |= VY
+    V[X] |= V[Y];
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::op8XY2(unsigned char X, unsigned char Y) {
-    throwOpcodeNotImplemented(opcode);
+    // Sets VX &= VY
+    V[X] &= V[Y];
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::op8XY3(unsigned char X, unsigned char Y) {
-    throwOpcodeNotImplemented(opcode);
+    // Sets VX ^= VY
+    V[X] ^= V[Y];
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::op8XY4(unsigned char X, unsigned char Y) {
-    throwOpcodeNotImplemented(opcode);
+    // Adds VY to VX. Set VF to 1 if there is a carry, set VF to 0 if there is
+    // no carry
+    // Check if there's a carry. Because these are unsigned chars (1 byte), we
+    // need to keep the values under 255.
+    if (V[X] > 0xFF - V[Y]) {
+        // There is a carryover
+        V[0xF] = 1;
+    } else {
+        // No carry
+        V[0xF] = 0;
+    }
 
+    V[X] += V[Y];
+
+    // Increment program counter
+    pc += 2;
 }
 
 void Chip8::op8XY5(unsigned char X, unsigned char Y) {
-    throwOpcodeNotImplemented(opcode);
+    // Subtracts VY from VX. Set VF to 0 if there is a borrow, set VF to 1 if
+    // there is no borrow
+    // Check if there's a borrow. Because these are unsigned chars (1 byte), we
+    // need to keep the values under 255.
+    if (V[Y] > V[X]) {
+        // There is a borrow
+        V[0xF] = 0;
+    } else {
+        // No borrow
+        V[0xF] = 1;
+    }
 
+    V[X] -= V[Y];
+
+    // Increment program counter
+    pc += 2;
 }
 
 void Chip8::op8XY6(unsigned char X, unsigned char Y) {
-    throwOpcodeNotImplemented(opcode);
+    // Stores the VX LSB in VF and shifts VX right by 1 bit
+    V[0xF] = V[X] & 0x0001;
+    V[X] >>= 1;
 
+    // Increment program counter
+    pc += 2;
 }
 
 void Chip8::op8XY7(unsigned char X, unsigned char Y) {
-    throwOpcodeNotImplemented(opcode);
+    // Sets VX = VY-VX. Set VF to 0 if there is a borrow, set VF to1  if there
+    // is no borrow.
+    // Check if there's a borrow. Because these are unsigned chars (1 byte), we
+    // need to keep the values under 255.
+    if (V[X] > V[Y]) {
+        // There is a borrow
+        V[0xF] = 0;
+    } else {
+        // No borrow
+        V[0xF] = 1;
+    }
 
+    V[X] = V[Y] - V[X];
+
+    // Increment program counter
+    pc += 2;
 }
 
 void Chip8::op8XYE(unsigned char X, unsigned char Y) {
-    throwOpcodeNotImplemented(opcode);
+    // Stores the VX MSB in VF and shifts VX left by 1 bit
+    V[0xF] = V[X] >> 7;
+    V[X] <<= 1;
 
+    // Increment program counter
+    pc += 2;
 }
 
 void Chip8::op9XY0(unsigned char X, unsigned char Y) {
-    throwOpcodeNotImplemented(opcode);
-
+    // Skips the next instruction if VX != VY
+    if (V[X] != V[Y]) {
+        // Increment the program counter twice
+        pc += 4;
+    } else {
+        // Increment the program counter once
+        pc += 2;
+    }
 }
 
 void Chip8::opANNN(unsigned short N) {
-    throwOpcodeNotImplemented(opcode);
+    // Sets I to NNN
+    I = N;
 
+    // Increment Program Counter
+    pc += 2;
 }
 
 void Chip8::opBNNN(unsigned short N) {
-    throwOpcodeNotImplemented(opcode);
-
+    // Jumps to the address NNN plus V0
+    pc = N + V[0];
 }
 
 void Chip8::opCXNN(unsigned char X, unsigned char N) {
-    throwOpcodeNotImplemented(opcode);
+    // Sets VX to rand & NN
+    V[X] = N & (rand() & 0xFF);
 
+    // Increment Program Counter
+    pc += 2;
 }
 
 void Chip8::opDXYN(unsigned char X, unsigned char Y, unsigned char N) {
-    throwOpcodeNotImplemented(opcode);
+    // Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a
+    // height of N+1 pixels. Each row of 8 pixels is read as bit-coded starting
+    // from memory location I; I value doesn’t change after the execution of
+    // this instruction. VF is set to 1 if any screen pixels are flipped from
+    // set to unset when the sprite is drawn, and to 0 if that doesn’t happen 
 
+    // Reset VF
+    V[0xF] = 0;
+
+    unsigned short line;
+    unsigned short pixel;
+    unsigned short pixelPos;
+
+    for(int h = 0; h < N; h++) {
+        line = memory[I + h];
+        for (int w = 0; w < 8; w++) {
+            pixelPos = (X + w) + (Y + h) * GFX_X;
+            pixel = (line & (1 << (7 - w))) != 0;
+            V[0xF] |= (pixel & gfx[pixelPos]);  // If pixel and last_pixel, set VF to 1
+            gfx[pixelPos] ^= pixel;  // last_pixel XOR pixel
+        }
+    }
+
+    drawFlag = true;
+
+    // Increment Program Counter
+    pc += 2;
+
+    printf("Warning: Graphics not implmemented\n");
 }
 
 void Chip8::opEX9E(unsigned char X) {
-    throwOpcodeNotImplemented(opcode);
-
+    // Skips the next instruction if the key in VX is pressed
+    if (key[V[X]] == 1) {
+        // Increment the program counter twice
+        pc += 4;
+    } else {
+        // Increment the program counter once
+        pc += 2;
+    }
 }
 
 void Chip8::opEXA1(unsigned char X) {
-    throwOpcodeNotImplemented(opcode);
-
+    // Skips the next instruction if the key in VX is not pressed
+    if (key[V[X]] == 0) {
+        // Increment the program counter twice
+        pc += 4;
+    } else {
+        // Increment the program counter once
+        pc += 2;
+    }
 }
 
 void Chip8::opFX07(unsigned char X) {
-    throwOpcodeNotImplemented(opcode);
+    // Sets VX to the value of the delay timer
+    V[X] = delayTimer;
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::opFX0A(unsigned char X) {
     throwOpcodeNotImplemented(opcode);
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::opFX15(unsigned char X) {
-    throwOpcodeNotImplemented(opcode);
+    // Sets the delay timer to VX
+    delayTimer = V[X];
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::opFX18(unsigned char X) {
-    throwOpcodeNotImplemented(opcode);
+    // Sets the sound timer to VX
+    soundTimer = V[X];
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::opFX1E(unsigned char X) {
-    throwOpcodeNotImplemented(opcode);
+    // Adds VX to I. Does not affect VF
+    I += V[X];
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::opFX29(unsigned char X) {
     throwOpcodeNotImplemented(opcode);
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::opFX33(unsigned char X) {
     throwOpcodeNotImplemented(opcode);
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::opFX55(unsigned char X) {
-    throwOpcodeNotImplemented(opcode);
+    // Dumps the registers V0-VX (inclusive) in memory starting at location I. I
+    // is left unmodified.
+    for (int i = 0; i <= X; i++) {
+        memory[I + i] = V[i];
+    }
 
+    // Increment the program counter
+    pc += 2;
 }
 
 void Chip8::opFX65(unsigned char X) {
-    throwOpcodeNotImplemented(opcode);
+    // Loads the registers V0-VX (inclusive) in memory starting from location I.
+    // I is left unmodified.
+    for (int i = 0; i <= X; i++) {
+        V[i] = memory[I + i];
+    }
 
+    // Increment the program counter
+    pc += 2;
 }
 

@@ -44,7 +44,6 @@ private:
     unsigned char V[REGISTERS];  // 16 registers
     unsigned short I;  // Address register (16 bits)
 
-
     // Timer registers
     unsigned char delayTimer;  // Counts down at 60Hz
     unsigned char soundTimer;  // Counts down at 60Hz, plays a sound when reaches 0
@@ -52,6 +51,9 @@ private:
     // Stack
     unsigned short stack[STACK];  // 16 levels of stack
     unsigned short sp;  // Stack pointer
+
+    // Draw Flag: Only update the graphics when needed
+    unsigned char drawFlag;
 
     // Opcodes, see https://en.wikipedia.org/wiki/CHIP-8#Opcode_table
     void runOpcode();
