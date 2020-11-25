@@ -57,6 +57,7 @@ private:
 
     // Opcodes, see https://en.wikipedia.org/wiki/CHIP-8#Opcode_table
     void runOpcode();
+    void throwOpcodeNotImplemented(unsigned short opcode);
 
     void op0NNN(unsigned short N);
     void op00E0();
@@ -137,8 +138,6 @@ public:
     void emulateCycle();
 };
 
-
-void throwOpcodeNotImplemented(unsigned short opcode);
 
 #endif
 

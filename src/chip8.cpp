@@ -5,6 +5,8 @@
 
 #include "chip8.h"
 
+#define DEBUG
+
 const unsigned char chip8_fontset[FONTSET_LEN] = { 
     0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
     0x20, 0x60, 0x20, 0x20, 0x70,  // 1
@@ -62,10 +64,9 @@ Chip8::~Chip8() {
 
 void Chip8::loadRom(const char * path) {
     // Open ROM file in binary mode
-    std::ifstream infile(path, std::ios::in | std::ios::binary);
+    std::ifstream infile(path, std::ios::in | std::ios::binary | std::ios::ate);
  
     // Check that ROM file size fits
-    infile.seekg(infile.end);
     int length = infile.tellg();
     infile.seekg(infile.beg);
 
@@ -77,7 +78,6 @@ void Chip8::loadRom(const char * path) {
         char * buffer = new char[length];
         infile.read(buffer, length); 
         memcpy(memory + ROM_START, buffer, length);
-        std::free(buffer);
     } else {
         // ROM too big
         throw std::invalid_argument("ROM file too big");
@@ -85,10 +85,18 @@ void Chip8::loadRom(const char * path) {
 }
 
 void Chip8::emulateCycle() {
+    // Make sure program counter is within bounds
+    if (pc > ROM_END || pc < ROM_START) {
+        throw FormattedException("Program Counter out of range: %X\n", pc);
+    }
+
     // Get opcode
     // Opcode is 2 bytes at the pc
     opcode = memory[pc] << 8 | memory[pc + 1];
+
+#ifdef DEBUG
     printf("PC: %X, Opcode: %X\n", pc, opcode);
+#endif
 
     // Reset drawFlag
     drawFlag = false;
@@ -118,12 +126,12 @@ void Chip8::runOpcode() {
     switch (opcode & 0xF000) {
         // Insert opcodes here
         case 0x0000:
-            switch (opcode & 0x0F) {
-                case 0x0000:
+            switch (opcode) {
+                case 0x00E0:
                     op00E0();
                     break;
 
-                case 0x000E:
+                case 0x00EE:
                     op00EE();
                     break;
                 
@@ -272,13 +280,13 @@ void Chip8::runOpcode() {
 
         // Opcode not found
         default:
-            printf("Program counter: %X", pc);
             throwOpcodeNotImplemented(opcode);
             break;
     }
 }
 
-void throwOpcodeNotImplemented(unsigned short opcode) {
+void Chip8::throwOpcodeNotImplemented(unsigned short opcode) {
+    printf("PC: %X, Opcode: %X\n", pc, opcode);
     throw FormattedException("Opcode not found, 0x%X\n", opcode);
 }
 

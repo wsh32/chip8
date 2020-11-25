@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['key_6',['key',['../class_chip8.html#a2c772b9d08b2e7b493e136fa94db0faf',1,'Chip8']]]
+  ['gfx_8',['gfx',['../class_chip8.html#a690f986d89bbdebaceafdf7ceffea07b',1,'Chip8']]]
 ];
