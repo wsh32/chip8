@@ -621,7 +621,12 @@ void Chip8::opFX29(unsigned char X) {
 }
 
 void Chip8::opFX33(unsigned char X) {
-    throwOpcodeNotImplemented(opcode);
+    // Stores the binary-coded decimal of VX in I, I+1, and I+2, where I is the
+    // MSB, I+1 is the middle byte and I+2 is the LSB.
+    // https://en.wikipedia.org/wiki/Binary-coded_decimal
+    memory[I] = V[X] / 100;  // MSB
+    memory[I+1] = (V[X] / 10) % 10;  // Middle byte
+    memory[I+2] = V[X] % 10;  // LSB
 
     // Increment the program counter
     pc += 2;
