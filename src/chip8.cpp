@@ -6,6 +6,7 @@
 #include "chip8.h"
 
 #define DEBUG
+#define WARNING
 
 const unsigned char chip8_fontset[FONTSET_LEN] = { 
     0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
@@ -150,61 +151,61 @@ void Chip8::runOpcode() {
             break;
 
         case 0x3000:
-            op3XNN(opcode & 0x0F00 >> 2, opcode & 0x00FF);
+            op3XNN((opcode & 0x0F00) >> 8, opcode & 0x00FF);
             break;
 
         case 0x4000:
-            op4XNN(opcode & 0x0F00 >> 2, opcode & 0x00FF);
+            op4XNN((opcode & 0x0F00) >> 8, opcode & 0x00FF);
             break;
 
         case 0x5000:
-            op5XY0(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1);
+            op5XY0((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
             break;
 
         case 0x6000:
-            op6XNN(opcode & 0x0F00 >> 2, opcode & 0x00FF);
+            op6XNN((opcode & 0x0F00) >> 8, opcode & 0x00FF);
             break;
 
         case 0x7000:
-            op7XNN(opcode & 0x0F00 >> 2, opcode & 0x00FF);
+            op7XNN((opcode & 0x0F00) >> 8, opcode & 0x00FF);
             break;
 
         case 0x8000:
             switch (opcode & 0xF00F) {
                 case 0x8000:
-                    op8XY0(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1);
+                    op8XY0((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
                     break;
 
                 case 0x8001:
-                    op8XY1(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1);
+                    op8XY1((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
                     break;
 
                 case 0x8002:
-                    op8XY2(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1);
+                    op8XY2((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
                     break;
 
                 case 0x8003:
-                    op8XY3(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1);
+                    op8XY3((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
                     break;
 
                 case 0x8004:
-                    op8XY4(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1);
+                    op8XY4((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
                     break;
 
                 case 0x8005:
-                    op8XY5(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1);
+                    op8XY5((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
                     break;
 
                 case 0x8006:
-                    op8XY6(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1);
+                    op8XY6((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
                     break;
 
                 case 0x8007:
-                    op8XY7(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1);
+                    op8XY7((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
                     break;
 
                 case 0x800E:
-                    op8XYE(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1);
+                    op8XYE((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
                     break;
 
                 // Opcode not found
@@ -214,7 +215,7 @@ void Chip8::runOpcode() {
             }
 
         case 0x9000:
-            op9XY0(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1);
+            op9XY0((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
             break;
 
         case 0xA000:
@@ -226,49 +227,49 @@ void Chip8::runOpcode() {
             break;
 
         case 0xC000:
-            opCXNN(opcode & 0x0F00 >> 2, opcode & 0x00FF);
+            opCXNN(((opcode & 0x0F00) >> 8), (opcode & 0x00FF));
             break;
 
         case 0xD000:
-            opDXYN(opcode & 0x0F00 >> 2, opcode & 0x00F0 >> 1, opcode & 0x000F);
+            opDXYN((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
             break;
 
         case 0xF000:
             switch (opcode & 0xF0FF) {
                 case 0xF007:
-                    opFX07(opcode & 0x0F00 >> 2);
+                    opFX07((opcode & 0x0F00) >> 8);
                     break;
 
                 case 0xF00A:
-                    opFX0A(opcode & 0x0F00 >> 2);
+                    opFX0A((opcode & 0x0F00) >> 8);
                     break;
 
                 case 0xF015:
-                    opFX15(opcode & 0x0F00 >> 2);
+                    opFX15((opcode & 0x0F00) >> 8);
                     break;
 
                 case 0xF018:
-                    opFX18(opcode & 0x0F00 >> 2);
+                    opFX18((opcode & 0x0F00) >> 8);
                     break;
 
                 case 0xF01E:
-                    opFX1E(opcode & 0x0F00 >> 2);
+                    opFX1E((opcode & 0x0F00) >> 8);
                     break;
 
                 case 0xF029:
-                    opFX29(opcode & 0x0F00 >> 2);
+                    opFX29((opcode & 0x0F00) >> 8);
                     break;
 
                 case 0xF033:
-                    opFX33(opcode & 0x0F00 >> 2);
+                    opFX33((opcode & 0x0F00) >> 8);
                     break;
 
                 case 0xF055:
-                    opFX55(opcode & 0x0F00 >> 2);
+                    opFX55((opcode & 0x0F00) >> 8);
                     break;
 
                 case 0xF065:
-                    opFX65(opcode & 0x0F00 >> 2);
+                    opFX65((opcode & 0x0F00) >> 8);
                     break;
 
                 // Opcode not found
@@ -299,7 +300,9 @@ void Chip8::op00E0() {
     // Clear display
     std::fill(gfx, gfx + sizeof(gfx), 0);
     drawFlag = true;
+#ifdef WARNING
     printf("Warning: graphics not implemented, clear display\n");
+#endif
 
     // Increment Program Counter
     pc += 2;
@@ -544,7 +547,9 @@ void Chip8::opDXYN(unsigned char X, unsigned char Y, unsigned char N) {
     // Increment Program Counter
     pc += 2;
 
+#ifdef WARNING
     printf("Warning: Graphics not implmemented\n");
+#endif
 }
 
 void Chip8::opEX9E(unsigned char X) {
