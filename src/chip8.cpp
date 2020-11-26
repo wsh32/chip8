@@ -5,8 +5,8 @@
 
 #include "chip8.h"
 
-#define DEBUG
-#define WARNING
+// #define DEBUG
+// #define WARNING
 
 const unsigned char chip8_fontset[FONTSET_LEN] = { 
     0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
@@ -232,6 +232,23 @@ void Chip8::runOpcode() {
 
         case 0xD000:
             opDXYN((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
+            break;
+
+        case 0xE000:
+            switch (opcode & 0xF0FF) {
+                case 0xE09E:
+                    opEX9E((opcode & 0x0F00) >> 8);
+                    break;
+
+                case 0xE0A1:
+                    opEXA1((opcode & 0x0F00) >> 8);
+                    break;
+
+                // Opcode not found
+                default:
+                    throwOpcodeNotImplemented(opcode);
+                    break;
+            }
             break;
 
         case 0xF000:
@@ -583,6 +600,8 @@ void Chip8::opFX07(unsigned char X) {
 }
 
 void Chip8::opFX0A(unsigned char X) {
+    // A key press is awaited, and then stored in VX. (Blocking Operation. All
+    // instruction halted until next key event)
     throwOpcodeNotImplemented(opcode);
 
     // Increment the program counter
@@ -614,7 +633,10 @@ void Chip8::opFX1E(unsigned char X) {
 }
 
 void Chip8::opFX29(unsigned char X) {
-    throwOpcodeNotImplemented(opcode);
+    // Sets I to the location of the sprite for the character in VX. Characters
+    // 0-F (in hexadecimal) are represented by a 4x5 font.
+    // Font is stored starting at 0x0000, with each character taking 5 bytes
+    I = V[X] * 5;
 
     // Increment the program counter
     pc += 2;
