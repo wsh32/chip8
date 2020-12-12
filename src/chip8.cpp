@@ -63,7 +63,7 @@ Chip8::~Chip8() {
 
 }
 
-void Chip8::loadRom(const char * path) {
+void Chip8::loadRom(const char *path) {
     // Open ROM file in binary mode
     std::ifstream infile(path, std::ios::in | std::ios::binary | std::ios::ate);
  
@@ -76,7 +76,7 @@ void Chip8::loadRom(const char * path) {
         std::fill(memory + ROM_START, memory + ROM_END, 0);
         
         // Write ROM data to memory
-        char * buffer = new char[length];
+        char *buffer = new char[length];
         infile.read(buffer, length); 
         memcpy(memory + ROM_START, buffer, length);
     } else {
@@ -100,7 +100,7 @@ void Chip8::emulateCycle() {
 #endif
 
     // Reset drawFlag
-    drawFlag = false;
+    //drawFlag = false;
 
     // Execute opcode
     runOpcode();
@@ -546,7 +546,7 @@ void Chip8::opDXYN(unsigned char X, unsigned char Y, unsigned char N) {
     V[0xF] = 0;
 
     unsigned short line;
-    unsigned short pixel;
+    bool pixel;
     unsigned short pixelPos;
 
     for(int h = 0; h < N; h++) {
@@ -571,7 +571,7 @@ void Chip8::opDXYN(unsigned char X, unsigned char Y, unsigned char N) {
 
 void Chip8::opEX9E(unsigned char X) {
     // Skips the next instruction if the key in VX is pressed
-    if (key[V[X]] == 1) {
+    if (key[V[X]]) {
         // Increment the program counter twice
         pc += 4;
     } else {
@@ -582,7 +582,7 @@ void Chip8::opEX9E(unsigned char X) {
 
 void Chip8::opEXA1(unsigned char X) {
     // Skips the next instruction if the key in VX is not pressed
-    if (key[V[X]] == 0) {
+    if (!key[V[X]]) {
         // Increment the program counter twice
         pc += 4;
     } else {

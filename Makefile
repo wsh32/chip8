@@ -1,7 +1,10 @@
-CXX = g++
-CXXFLAGS = -Wall -Werror -std=c++14
+LIBS = gtkmm-3.0
 
-CHIP8_OBJS = chip8.o emulator.o formatted_exception.o
+CXX = g++
+CXXFLAGS = -Wall -Werror -std=c++14 `pkg-config --cflags $(LIBS)`
+LDFLAGS = `pkg-config --libs $(LIBS)`
+
+CHIP8_OBJS = chip8.o emulator.o formatted_exception.o io.o gtk_io.o
 CHIP8_BINARY = emulator
 
 SOURCE_DIR = ./src/
@@ -37,7 +40,6 @@ install: $(BINARY)
 
 docs: Doxyfile
 	@doxygen
-	@open docs/html/index.html
 
 .PHONY: all clean install
 

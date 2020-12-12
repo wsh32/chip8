@@ -1,5 +1,10 @@
 # CHIP-8
 
+### Requirements
+- `g++`
+- `glib-2.0`
+- `gtkmm-3.0`
+
 ### Resources
 
 - [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)

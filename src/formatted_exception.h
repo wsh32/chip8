@@ -19,8 +19,8 @@
  */
 class FormattedException : public std::exception {
 public:
-    FormattedException(const char * format, ...);
-    virtual const char * what() const throw() {return errMsg;};
+    FormattedException(const char *format, ...);
+    virtual const char* what() const throw() {return errMsg;};
     virtual ~FormattedException() throw() {};
 
 private:

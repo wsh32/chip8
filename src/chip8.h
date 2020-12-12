@@ -52,9 +52,6 @@ private:
     unsigned short stack[STACK];  // 16 levels of stack
     unsigned short sp;  // Stack pointer
 
-    // Draw Flag: Only update the graphics when needed
-    unsigned char drawFlag;
-
     // Opcodes, see https://en.wikipedia.org/wiki/CHIP-8#Opcode_table
     void runOpcode();
     void throwOpcodeNotImplemented(unsigned short opcode);
@@ -112,13 +109,18 @@ public:
      * @brief Graphics buffer. Dimensions are defined by GFX_X and GFX_Y, should
      * be 64x32. Each value in this buffer is a binary value.
      */
-    unsigned char gfx[GFX_X * GFX_Y];  // 64x32 graphics
+    bool gfx[GFX_X * GFX_Y];  // 64x32 graphics
+
+    /**
+     * @brief Drawing flag. When this is true, reload the graphics.
+     */
+    bool drawFlag;
 
     /**
      * @brief Input buffer. Number of inputs is defined by KEYS, should be 16.
      * Each value in this buffer is a binary value.
      */
-    unsigned char key[KEYS];  // Keypad
+    bool key[KEYS];  // Keypad
 
     /**
      * @brief Loads a ROM file into memory. The location in memory allocated to ROM
@@ -130,7 +132,7 @@ public:
      * to the user's current directory.
      * @throws invalid_argument if the ROM file is greater than the allocated memory
      */
-    void loadRom(const char * path);
+    void loadRom(const char *path);
 
     /**
      * @brief Runs a single clock cycle in emulation.

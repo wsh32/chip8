@@ -5,7 +5,7 @@
 
 #include "formatted_exception.h"
 
-FormattedException::FormattedException(const char * format, ...) : std::exception() {
+FormattedException::FormattedException(const char *format, ...) : std::exception() {
     va_list args;
     va_start(args, format);
 
