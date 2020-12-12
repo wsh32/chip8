@@ -32,6 +32,10 @@ private:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 public:
+    /**
+     * @brief Constructs the implementation of Gtk::DrawingArea for the Chip8
+     * system.
+     */
     Chip8Window(Chip8 *chip8);
 
     virtual ~Chip8Window();

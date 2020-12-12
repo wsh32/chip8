@@ -112,7 +112,9 @@ public:
     bool gfx[GFX_X * GFX_Y];  // 64x32 graphics
 
     /**
-     * @brief Drawing flag. When this is true, reload the graphics.
+     * @brief Drawing flag. When this is true, reload the graphics. The graphics
+     * driver is expected to externally reset the draw flag after the display
+     * has been updated.
      */
     bool drawFlag;
 
