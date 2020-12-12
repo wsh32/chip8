@@ -17,16 +17,6 @@ int main(int argc, char *argv[]) {
     Chip8 *chip8 = new Chip8();
     chip8->loadRom(rom);
 
-    // Main loop
-//    while(true) {
-//        try {
-//            chip8->emulateCycle();
-//        } catch (std::exception &ex) {
-//            fprintf(stderr, "%s", ex.what());
-//            break;
-//        }
-//    }
-
     GtkDriver gtk(chip8);
     return gtk.run();
 }
