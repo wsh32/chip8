@@ -595,10 +595,14 @@ void Chip8::opFX07(unsigned char X) {
 void Chip8::opFX0A(unsigned char X) {
     // A key press is awaited, and then stored in VX. (Blocking Operation. All
     // instruction halted until next key event)
-    throwOpcodeNotImplemented(opcode);
-
-    // Increment the program counter
-    pc += 2;
+    for (int i = 0; i < KEYS; i++) {
+        if (key[i]) {
+            V[X] = i;
+            // Only increment the program counter if a key press is found
+            pc += 2;
+            return;
+        }
+    }
 }
 
 void Chip8::opFX15(unsigned char X) {
