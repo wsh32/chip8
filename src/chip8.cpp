@@ -550,7 +550,7 @@ void Chip8::opDXYN(unsigned char X, unsigned char Y, unsigned char N) {
         line = memory[I + h];
         for (int w = 0; w < 8; w++) {
             pixelPos = (V[X] + w) + (V[Y] + h) * GFX_X;
-            pixel = (line & (1 << (7 - w))) != 0;
+            pixel = (line & (0x80 >> w)) != 0;
             V[0xF] |= (pixel & gfx[pixelPos]);  // If pixel and last_pixel, set VF to 1
             gfx[pixelPos] ^= pixel;  // last_pixel XOR pixel
         }
@@ -560,10 +560,6 @@ void Chip8::opDXYN(unsigned char X, unsigned char Y, unsigned char N) {
 
     // Increment Program Counter
     pc += 2;
-
-#ifdef WARNING
-    printf("Warning: Graphics not implmemented\n");
-#endif
 }
 
 void Chip8::opEX9E(unsigned char X) {
