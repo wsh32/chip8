@@ -317,9 +317,6 @@ void Chip8::op00E0() {
     // Clear display
     std::fill(gfx, gfx + sizeof(gfx), 0);
     drawFlag = true;
-#ifdef WARNING
-    printf("Warning: graphics not implemented, clear display\n");
-#endif
 
     // Increment Program Counter
     pc += 2;
@@ -552,7 +549,7 @@ void Chip8::opDXYN(unsigned char X, unsigned char Y, unsigned char N) {
     for(int h = 0; h < N; h++) {
         line = memory[I + h];
         for (int w = 0; w < 8; w++) {
-            pixelPos = (X + w) + (Y + h) * GFX_X;
+            pixelPos = (V[X] + w) + (V[Y] + h) * GFX_X;
             pixel = (line & (1 << (7 - w))) != 0;
             V[0xF] |= (pixel & gfx[pixelPos]);  // If pixel and last_pixel, set VF to 1
             gfx[pixelPos] ^= pixel;  // last_pixel XOR pixel
