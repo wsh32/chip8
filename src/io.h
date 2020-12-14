@@ -8,8 +8,6 @@
 
 #include "chip8.h"
 
-#define CLOCK_HZ 60.0
-
 /**
  * @class IO
  * @brief Input/Output driver interface definition

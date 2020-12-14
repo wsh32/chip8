@@ -6,9 +6,9 @@
 #include "chip8.h"
 
 // #define DEBUG
-// #define WARNING
+#define WARNING
 
-const unsigned char chip8_fontset[FONTSET_LEN] = { 
+const unsigned char CHIP8_FONTSET[FONTSET_LEN] = { 
     0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
     0x20, 0x60, 0x20, 0x20, 0x70,  // 1
     0xF0, 0x10, 0xF0, 0x80, 0xF0,  // 2
@@ -26,6 +26,12 @@ const unsigned char chip8_fontset[FONTSET_LEN] = {
     0xF0, 0x80, 0xF0, 0x80, 0xF0,  // E
     0xF0, 0x80, 0xF0, 0x80, 0x80   // F
 };
+
+int timediff_ms(struct timeval *end, struct timeval *start) {
+    int diff = (end->tv_sec - start->tv_sec) * 1000 + 
+               (end->tv_usec - start->tv_usec) / 1000;
+    return diff;
+}
 
 Chip8::Chip8() {
     pc = ROM_START;
@@ -49,14 +55,18 @@ Chip8::Chip8() {
     std::fill(memory, memory + sizeof(memory), 0);
 
     // Load font in memory
-    memcpy(memory, &chip8_fontset, FONTSET_LEN);
+    memcpy(memory, &CHIP8_FONTSET, FONTSET_LEN);
 
     // Reset timers
     delayTimer = 0;
     soundTimer = 0;
+    gettimeofday(&clockPrev, NULL);
 
     // Clear keypad
     std::fill(key, key + sizeof(key), 0);
+
+    // Set random seed
+    srand(0);
 }
 
 Chip8::~Chip8() {
@@ -106,19 +116,48 @@ void Chip8::emulateCycle() {
     runOpcode();
 
     // Timers
-    // Count down 1 each timer
-    if (delayTimer > 0) {
-        delayTimer--;
-    }
+    struct timeval clockNow;
+    gettimeofday(&clockNow, NULL);
 
-    if (soundTimer > 0) {
-        // Decrement soundTimer and check the value after decrement
-        if (--soundTimer == 0) {
-            // Sound buzzer
-            printf("beep");
+    if (timediff_ms(&clockNow, &clockPrev) >= CLOCK_RATE_MS) {
+        // Count down 1 each timer
+        if (delayTimer > 0) {
+            delayTimer--;
         }
+
+        if (soundTimer > 0) {
+            // Decrement soundTimer and check the value after decrement
+            if (--soundTimer == 0) {
+                // Sound buzzer
+#ifdef WARNING
+                printf("BEEEEEEEEP\n");
+#endif
+            }
+        }
+        clockPrev = clockNow;
     }
 }
+
+#ifdef DEBUG
+void printGraphics(bool* gfx) {
+    int last_y = 0;
+    // Loop through all x and y positions
+    for (int i = 0; i < GFX_X * GFX_Y; i++) {
+        int pixelY = i / GFX_X;
+        // Check if this pixel
+        if (gfx[i]) {
+            printf(". ");
+        } else {
+            printf("  ");
+        }
+
+        if (pixelY != last_y) {
+            printf("\n");
+        }
+        last_y = pixelY;
+    }
+}
+#endif
 
 void Chip8::runOpcode() {
     // Decode opcode
@@ -213,6 +252,7 @@ void Chip8::runOpcode() {
                     throwOpcodeNotImplemented(opcode);
                     break;
             }
+            break;
 
         case 0x9000:
             op9XY0((opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
@@ -430,7 +470,7 @@ void Chip8::op8XY4(unsigned char X, unsigned char Y) {
     // no carry
     // Check if there's a carry. Because these are unsigned chars (1 byte), we
     // need to keep the values under 255.
-    if (V[X] > 0xFF - V[Y]) {
+    if (V[X] > (0xFF - V[Y])) {
         // There is a carryover
         V[0xF] = 1;
     } else {
@@ -551,7 +591,7 @@ void Chip8::opDXYN(unsigned char X, unsigned char Y, unsigned char N) {
         for (int w = 0; w < 8; w++) {
             pixelPos = (V[X] + w) + (V[Y] + h) * GFX_X;
             pixel = (line & (0x80 >> w)) != 0;
-            V[0xF] |= (pixel & gfx[pixelPos]);  // If pixel and last_pixel, set VF to 1
+            V[0xF] = (pixel && gfx[pixelPos]) ? 1 : 0;  // If pixel and last_pixel, set VF to 1
             gfx[pixelPos] ^= pixel;  // last_pixel XOR pixel
         }
     }
@@ -633,7 +673,7 @@ void Chip8::opFX29(unsigned char X) {
     // Sets I to the location of the sprite for the character in VX. Characters
     // 0-F (in hexadecimal) are represented by a 4x5 font.
     // Font is stored starting at 0x0000, with each character taking 5 bytes
-    I = V[X] * 5;
+    I = V[X] * 0x5;
 
     // Increment the program counter
     pc += 2;

@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <cstring>
+#include <sys/time.h>
 
 #include "formatted_exception.h"
 
@@ -32,6 +33,15 @@
 
 #define FONTSET_LEN 80
 
+#define CLOCK_HZ 60.0
+#define CLOCK_RATE_MS ((int) ((1.0 / CLOCK_HZ) * 1000 + 0.5))
+#define CPU_CLOCK_HZ 1000
+
+/**
+ * @brief Calculates time difference in milliseconds
+ */
+int timediff_ms(struct timeval *end, struct timeval *start);
+
 /**
  * @class Chip8
  * @brief Chip8 system internals
@@ -47,6 +57,9 @@ private:
     // Timer registers
     unsigned char delayTimer;  // Counts down at 60Hz
     unsigned char soundTimer;  // Counts down at 60Hz, plays a sound when reaches 0
+
+    // Timestamp
+    struct timeval clockPrev;
 
     // Stack
     unsigned short stack[STACK];  // 16 levels of stack
