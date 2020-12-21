@@ -33,6 +33,12 @@ int timediff_ms(struct timeval *end, struct timeval *start) {
     return diff;
 }
 
+int timediff_us(struct timeval *end, struct timeval *start) {
+    int diff = (end->tv_sec - start->tv_sec) * 1000000 + 
+               (end->tv_usec - start->tv_usec);
+    return diff;
+}
+
 Chip8::Chip8() {
     pc = ROM_START;
  

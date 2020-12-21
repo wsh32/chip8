@@ -36,8 +36,12 @@ Chip8Window::Chip8Window(Chip8 *chip8) {
     this->add(*area);
     area->show();
 
-    Glib::signal_timeout().connect(sigc::mem_fun(*this,
-                &Chip8Window::emulateCycle), 1000 / CPU_CLOCK_HZ);
+//    Glib::signal_timeout().connect(sigc::mem_fun(*this,
+//                &Chip8Window::emulateCycle), 1000 / CPU_CLOCK_HZ);
+    Glib::signal_idle().connect(sigc::mem_fun(*this,
+                &Chip8Window::emulateCycle));
+
+    gettimeofday(&clockPrev, NULL);
 }
 
 Chip8Window::~Chip8Window() {
@@ -45,7 +49,15 @@ Chip8Window::~Chip8Window() {
 }
 
 bool Chip8Window::emulateCycle() {
-    return area->emulateCycle();
+    struct timeval clockNow;
+    gettimeofday(&clockNow, NULL);
+
+    if (timediff_us(&clockNow, &clockPrev) >= CPU_CLOCK_RATE_US) {
+        clockPrev = clockNow;
+        return area->emulateCycle();
+    } else {
+        return true;
+    }
 }
 
 bool Chip8Window::on_key_press_event(GdkEventKey *event) {

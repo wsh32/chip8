@@ -36,11 +36,13 @@
 #define CLOCK_HZ 60.0
 #define CLOCK_RATE_MS ((int) ((1.0 / CLOCK_HZ) * 1000 + 0.5))
 #define CPU_CLOCK_HZ 1000
+#define CPU_CLOCK_RATE_US ((int) ((1.0 / CPU_CLOCK_HZ) * 1000000))
 
 /**
  * @brief Calculates time difference in milliseconds
  */
 int timediff_ms(struct timeval *end, struct timeval *start);
+int timediff_us(struct timeval *end, struct timeval *start);
 
 /**
  * @class Chip8

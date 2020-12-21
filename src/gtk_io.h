@@ -72,6 +72,7 @@ private:
     bool emulateCycle();
     bool on_key_press_event(GdkEventKey *event) override;
     bool on_key_release_event(GdkEventKey *event) override;
+    struct timeval clockPrev;
 
 public:
     /**
